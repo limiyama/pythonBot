@@ -1,0 +1,21 @@
+{
+  "name": "twitterbot",
+  "version": "1.0.0",
+  "description": "bot do twitter de teste",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jimin",
+    "bot",
+    "quote",
+    "comfort"
+  ],
+  "author": "mapamundy",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "twit": "^2.2.11"
+  }
+}
