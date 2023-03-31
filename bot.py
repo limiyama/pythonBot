@@ -2,61 +2,53 @@
 import tweepy
 
 #from our keys module (keys.py), import the keys dictionary
-from keys import keys
 
 print("o bot está rodando!!")
 
-CONSUMER_KEY = keys['consumer_key']
-CONSUMER_SECRET = keys['consumer_secret']
-ACCESS_TOKEN = keys['access_token']
-ACCESS_TOKEN_SECRET = keys['access_token_secret']
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
+ACCESS_TOKEN = ''
+ACCESS_TOKEN_SECRET = ''
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
+FILE_NAME = 'last.txt'
 api = tweepy.API(auth)
 
-twt = api.search(q="um tweet extremamente especifico para nao dar erro no bot assinado pjmfIeur")
+def check_mentions(api, keywords, since_id):
+    new_since_id = since_id
 
-#list of specific strings we want to check for in Tweets
-t = ['um tweet extremamente especifico para nao dar erro no bot assinado pjmfIeur']
+    for tweet in tweepy.Cursor(api.mentions_timeline,
 
-for s in twt:
-    for i in t:
-        if i == s.text:
-            sn = s.user.screen_name
-            m = "@%s Hello!" % (sn)
-            s = api.update_status(m, s.id)
+        since_id = since_id).items():
 
-'''console.log('Este bot está rodando...');
+        new_since_id = max(tweet.id, new_since_id)
 
-var tweetsRespondidos = [''];
-var respostasTweet = [''];
+        if tweet.in_reply_to_status_id is not None:
 
-function encontrarTweets(){
- 
-    Bot.get("search/tweets", {q: 'oi @nomebot' }, (err, data) => {
-        if (err) {
-            console.log(err.message);
-        } else {
-            console.log('achou!');
-            var tweetId = data.statuses[0].id_str;
-            var username = data.statuses[0].user.screen_name;
-            var mostrarRespostas = respostasTweet[Math.floor((Math.random() * respostasTweet.length))];
-  
-            if (tweetsRespondidos.includes(tweetId)){
-                console.log('Esse tweet já foi respondido!');
-            } else {
-                Bot.post('statuses/update', Bot.post('statuses/update', { in_reply_to_status_id: tweetId, status: `@${username} ${mostrarRespostas}` }, function(err){
-                    console.log('Respondeu ao: ', tweetId);
-                    if (err) {
-                        console.log(err.message);
-                    }
-                }))
-            }
-          
-            tweetsRespondidos.push(tweetId);
-        }
-    })
-} setInterval(encontrarTweets, 60000);
-'''
+            continue
+
+
+        print('procurando menções')
+        if any(keyword in tweet.text.lower() for keyword in keywords):
+
+            print('respondendo...')
+
+            if not tweet.user.following:
+
+                tweet.user.follow()
+
+            api.update_status ( status='alo',
+                in_reply_to_status_id=tweet.id,
+            )
+    return new_since_id
+
+def main():
+    since_id = 1
+
+    while True:
+
+        since_id = check_mentions(api, ['deus (jimin) me abençoe bastante para passar nesse processo seletivo'], since_id)
+
+main()
