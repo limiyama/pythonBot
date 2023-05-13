@@ -49,6 +49,6 @@ def main():
 
     while True:
 
-        since_id = check_mentions(api, ['deus (jimin) me abençoe bastante para passar nesse processo seletivo'], since_id)
+        since_id = check_mentions(api, ['texto especifico'], since_id)
 
 main()
